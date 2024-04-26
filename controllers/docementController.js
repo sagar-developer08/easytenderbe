@@ -4,37 +4,37 @@ const AWS = require('aws-sdk');
 const Document = require('../models/document'); // update the path as per your directory structure
 const path = require('path');
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    // region: 'YOUR_AWS_REGION'
-    apiVersion: '2006-03-01' // Add this line
-});
+// const s3 = new AWS.S3({
+//     accessKeyId: process.env.AWS_ACCESS_KEY,
+//         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//     // region: 'YOUR_AWS_REGION'
+//     apiVersion: '2006-03-01' // Add this line
+// });
 
-const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'dcpr',
-        acl: 'public-read',
-        metadata: function (req, file, cb) {
-            cb(null, { fieldName: file.fieldname });
-        },
-        key: function (req, file, cb) {
-            const folderName = req.body.folderName;
-            const extension = path.extname(file.originalname);
-            cb(null, `${folderName}/${Date.now().toString()}${extension}`); // Include the file extension // Prefix the key with the folder name
-        }
-    })
-});
+// const upload = multer({
+//     storage: multerS3({
+//         s3: s3,
+//         bucket: 'dcpr',
+//         acl: 'public-read',
+//         metadata: function (req, file, cb) {
+//             cb(null, { fieldName: file.fieldname });
+//         },
+//         key: function (req, file, cb) {
+//             const folderName = req.body.folderName;
+//             const extension = path.extname(file.originalname);
+//             cb(null, `${folderName}/${Date.now().toString()}${extension}`); // Include the file extension // Prefix the key with the folder name
+//         }
+//     })
+// });
 
 exports.uploadDocument = async (req, res) => {
     try {
-        upload.single('file')(req, res, async function (err) {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Failed to upload document');
-            }
-            const { folderName, documents } = req.body;
+        // upload.single('file')(req, res, async function (err) {
+            // if (err) {
+            //     console.error(err);
+            //     return res.status(500).send('Failed to upload document');
+            // }
+            const { folderName, documents,file } = req.body;
 
             if (!req.file) {
                 return res.status(400).send('No file uploaded');
@@ -42,15 +42,16 @@ exports.uploadDocument = async (req, res) => {
 
             const document = new Document({
                 folderName,
-                file: req.file.location,
+                file,
                 documents
             });
 
             const savedDocument = await document.save();
             res.send({ message: 'File uploaded and document saved successfully', document: savedDocument });
-        });
+        // });
     } catch (err) {
         console.log(err);
+        res.status(500).send(err);
     }
 };
 

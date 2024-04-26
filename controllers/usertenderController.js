@@ -14,27 +14,27 @@ const Tender = require('../models/tender');
 const user = require('../models/user');
 const path = require('path');
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    // region: 'YOUR_AWS_REGION'
-    apiVersion: '2006-03-01' // Add this line
-});
+// const s3 = new AWS.S3({
+//     accessKeyId: process.env.AWS_ACCESS_KEY,
+//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//     // region: 'YOUR_AWS_REGION'
+//     apiVersion: '2006-03-01' // Add this line
+// });
 
-const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'dcpr',
-        acl: 'public-read',
-        metadata: function (req, file, cb) {
-            cb(null, { fieldName: file.fieldname });
-        },
-        key: function (req, file, cb) {
-            const extension = path.extname(file.originalname);
-            cb(null, `${Date.now().toString()}${extension}`); // Use a unique key for each file and include the file extension
-        }
-    })
-});
+// const upload = multer({
+//     storage: multerS3({
+//         s3: s3,
+//         bucket: 'dcpr',
+//         acl: 'public-read',
+//         metadata: function (req, file, cb) {
+//             cb(null, { fieldName: file.fieldname });
+//         },
+//         key: function (req, file, cb) {
+//             const extension = path.extname(file.originalname);
+//             cb(null, `${Date.now().toString()}${extension}`); // Use a unique key for each file and include the file extension
+//         }
+//     })
+// });
 
 router.post('/tenderapply', async (req, res) => {
     
@@ -42,11 +42,11 @@ router.post('/tenderapply', async (req, res) => {
     if (existingApplication) {
         return res.status(400).send('You have already applied for this tender. Please wait for verification.');
     }
-    upload.single('file',)(req, res, async function (err) {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Failed to upload file');
-        }
+    // upload.single('file',)(req, res, async function (err) {
+    //     if (err) {
+    //         console.error(err);
+    //         return res.status(500).send('Failed to upload file');
+    //     }
         // const { name, amd, description, Value, role, user, startDate, endDate, seller, admin } = req.body;
 
         if (!req.file) {
@@ -63,7 +63,7 @@ router.post('/tenderapply', async (req, res) => {
         const newUsertender = new Usertender({
             name: req.body.name,
             usertender: req.body.usertender,
-            file: req.file.location,
+            file: req.body.file,
         });
         // console.log(newUsertender, 'newUsertender');
 
@@ -100,7 +100,7 @@ router.post('/tenderapply', async (req, res) => {
 
         await newUsertender.save();
         res.status(200).json(newUsertender);
-    });
+    // });
 });
 
 router.post('/tender/user/find', isAuthenticated, async (req, res) => {
@@ -189,11 +189,11 @@ router.delete('/:id', async (req, res) => {
 
 
 // Upload multiple files
-const uploadFiles = upload.array('files', 10); // change 'files' to the name of the field that is going to be uploaded
+// const uploadFiles = upload.array('files', 10); // change 'files' to the name of the field that is going to be uploaded
 
-const uploadFilesMiddleware = util.promisify(uploadFiles);
+// const uploadFilesMiddleware = util.promisify(uploadFiles);
 
-router.post('/upload', isAuthenticated, uploadFilesMiddleware, async (req, res) => {
+router.post('/upload', isAuthenticated, async (req, res) => {
     try {
         console.log(req.body.tenderId)
         // Check if tender id is provided
@@ -213,8 +213,8 @@ router.post('/upload', isAuthenticated, uploadFilesMiddleware, async (req, res) 
         }
 
         let fileUrls = [];
-        for (let file of req.files) {
-            fileUrls.push(file.location);
+        for (let file of req.body.files) {
+            fileUrls.push(file.filename);
         }
 
         userTender[0].fileUrls = fileUrls;
