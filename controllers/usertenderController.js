@@ -65,14 +65,14 @@ router.post('/tenderapply', async (req, res) => {
             usertender: req.body.usertender,
             file: req.body.file,
         });
-        // console.log(newUsertender, 'newUsertender');
+        // //console.log(newUsertender, 'newUsertender');
 
         const foundUsertender = await Tender.find({ _id: newUsertender.name });
         const foundUser = await user.find({ _id: newUsertender.usertender });
-        console.log(foundUsertender,'foundUsertender');
-        // console.log(foundUsertender, 'foundUsertender');
+        //console.log(foundUsertender,'foundUsertender');
+        // //console.log(foundUsertender, 'foundUsertender');
         // const user = await Usertender.findOne({ usertender: req.body.usertender });
-        // console.log(user, 'user');
+        // //console.log(user, 'user');
         // 
         // const transporter = nodemailer.createTransport({
         //     service: "gmail",
@@ -105,7 +105,7 @@ router.post('/tenderapply', async (req, res) => {
 
 router.post('/tender/user/find', isAuthenticated, async (req, res) => {
     const tenderId = req.body.name;
-    console.log(tenderId, 'tenderId');
+    //console.log(tenderId, 'tenderId');
 
     const users = await Usertender.find({ name: tenderId }).populate('usertender').populate('name');
 
@@ -114,7 +114,7 @@ router.post('/tender/user/find', isAuthenticated, async (req, res) => {
 // Read
 router.post('/tender/user/post', isAuthenticated, async (req, res) => {
     const userId = req.body.usertender
-    console.log(userId, 'userId')
+    //console.log(userId, 'userId')
     const usertenders = await Usertender.find({ usertender: userId }).populate('usertender').populate('name');
 
     res.status(200).json({ data: usertenders });
@@ -125,13 +125,13 @@ router.post('/tender/user/post', isAuthenticated, async (req, res) => {
 router.post('/getdetails/tender', isAuthenticated, async (req, res) => {
     try {
         const tenderId = req.body.name;
-        console.log(req.user, req.params.id, 'userId');
+        //console.log(req.user, req.params.id, 'userId');
 
         const usertender = await Usertender.findOne({ usertender: req.user._id }).populate('usertender').populate('name');
-        console.log(usertender, '76')
+        //console.log(usertender, '76')
         res.status(200).json({ data: usertender });
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         res.status(400).json({ message: err.message });
     }
     // // console.l
@@ -142,13 +142,13 @@ router.post('/getdetails/tender', isAuthenticated, async (req, res) => {
 router.get('/admin/getdetails/tender', async (req, res) => {
     try {
         // const tenderId = req.body.name;
-        // console.log(req.user, req.params.id, 'userId');
+        // //console.log(req.user, req.params.id, 'userId');
 
         const usertender = await Usertender.find().sort({createdAt: -1}).populate('usertender');;
-        // console.log(usertender, '76')
+        // //console.log(usertender, '76')
         res.status(200).json({ data: usertender });
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         res.status(400).json({ message: err.message });
     }
     // // console.l
@@ -159,16 +159,16 @@ router.get('/admin/getdetails/tender', async (req, res) => {
 router.post('/myaccount', isAuthenticated, async (req, res) => {
 
     try {
-        console.log(req.user._id, 'userId');
+        //console.log(req.user._id, 'userId');
 
         const usertenders = await Usertender.find({ usertender: req.user._id }).populate('usertender').populate('name');
-        console.log(usertenders, 'usertenders')
+        //console.log(usertenders, 'usertenders')
         // .populate('User') // assuming 'user' is the field that references the User model
         // .populate('Tender'); // assuming 'tender' is the field that references the Tender model
 
         res.status(200).json({ data: usertenders });
     } catch (error) {
-        console.log(error)
+        //console.log(error)
         res.status(400).json({ message: error.message })
     }
     // const userId = req.body.usertender;
@@ -195,7 +195,7 @@ router.delete('/:id', async (req, res) => {
 
 router.post('/upload', isAuthenticated, async (req, res) => {
     try {
-        console.log(req.body.tenderId)
+        //console.log(req.body.tenderId)
         // Check if tender id is provided
         if (!req.body.tenderId) {
             return res.status(400).json({ error: 'Tender ID is required' });
@@ -203,7 +203,7 @@ router.post('/upload', isAuthenticated, async (req, res) => {
 
         // Check if user has applied to the tender
         const userTender = await usertender.find({ _id: req.body.tenderId, usertender: req.user._id });
-        console.log(userTender, 'userTender')
+        //console.log(userTender, 'userTender')
         if (userTender.length === 0) {
             return res.status(404).json({ error: 'No tender found for this user' });
         }

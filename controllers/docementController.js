@@ -4,12 +4,12 @@ const AWS = require('aws-sdk');
 const Document = require('../models/document'); // update the path as per your directory structure
 const path = require('path');
 
-// const s3 = new AWS.S3({
-//     accessKeyId: process.env.AWS_ACCESS_KEY,
-//         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-//     // region: 'YOUR_AWS_REGION'
-//     apiVersion: '2006-03-01' // Add this line
-// });
+const s3 = new AWS.S3({
+    accessKeyId: process.env.KeyId,
+    secretAccessKey: process.env.AccessKey,
+    region: 'ap-south-1',
+    apiVersion: '2006-03-01' // Add this line
+});
 
 // const upload = multer({
 //     storage: multerS3({
@@ -34,23 +34,21 @@ exports.uploadDocument = async (req, res) => {
             //     console.error(err);
             //     return res.status(500).send('Failed to upload document');
             // }
-            const { folderName, documents,file } = req.body;
-
-            if (!req.file) {
-                return res.status(400).send('No file uploaded');
-            }
-
+            //console.log(req.body)
+            const { folderName,file } = req.body;
+            
+        
             const document = new Document({
                 folderName,
-                file,
-                documents
+                file
             });
+            //console.log(document)
 
             const savedDocument = await document.save();
             res.send({ message: 'File uploaded and document saved successfully', document: savedDocument });
         // });
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         res.status(500).send(err);
     }
 };
@@ -69,18 +67,18 @@ exports.getAllDocuments = async (req, res) => {
 exports.getAllFolders = async (req, res) => {
     try {
         const params = {
-            Bucket: 'dcpr',
+            Bucket: 'destination-ab',
             Delimiter: '/'
         };
 
         const data = await s3.listObjectsV2(params).promise();
-        console.log(data);
+        //console.log(data);
         const folders = data.CommonPrefixes.map(prefix => prefix.Prefix);
         const files = data.Contents.map(file => file.Key);
         
         const folderStructure = {};
-        console.log(files);
-        console.log(folderStructure);
+        //console.log(files);
+        //console.log(folderStructure);
         files.forEach(file => {
             const parts = file.split('/');
             const folder = parts[0];
@@ -138,12 +136,12 @@ exports.getFolderContents = async (req, res) => {
 
     try {
         const data = await s3.listObjects({
-            Bucket: 'dcpr',
+            Bucket: 'destination',
             Prefix: `${folderName}/`
         }).promise();
 
         const folderUrl = `https://${process.env.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${folderName}/`;
-        console.log(folderUrl,'folderUrl')
+        //console.log(folderUrl,'folderUrl')
         const documents = data.Contents.map(item => ({
             name: item.Key,
             url: `${folderUrl}${item.Key}`

@@ -20,7 +20,8 @@ router.put('/updatepassword', isAuthenticated, UserController.updatePassword)
 
 router.put('/me/updateProfile', isAuthenticated, UserController.updateUserProfile)
 
-router.get('/admin/users', isAuthenticated, authorizeRoles('admin'), UserController.allUser)
+// router.get('/admin/users', isAuthenticated, authorizeRoles('admin'), UserController.allUser)
+router.get('/admin/users', UserController.allUser)
 
 router.get('/admin/users/:id', isAuthenticated, authorizeRoles('admin'), UserController.getDetails)
 

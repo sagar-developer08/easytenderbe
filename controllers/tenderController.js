@@ -15,7 +15,7 @@ const AWS = require('aws-sdk');
 // });
 
 // const s3 = new S3({ client: s3Client });
-// console.log(s3,'s3');
+// //console.log(s3,'s3');
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -84,25 +84,25 @@ exports.createTender = async (req, res) => {
             res.status(500).send('Failed to saved in database');
         }
     } catch (err) {
-        console.log(err);
+        //console.log(err);
     }
 }
 exports.getTender = async (req, res) => {
     try {
         const tenders = await Tender.find();
-        console.log(tenders, 'ten')
+        //console.log(tenders, 'ten')
         return res.status(200).json({
             message: "Tender fetch",
             count: tenders.length,
             tenders
         });
     } catch (err) {
-        console.log(err);
+        //console.log(err);
     }
 }
 
 // exports.updateTender = async (req, res) => {
-//     console.log(req.body, 'req.body')
+//     //console.log(req.body, 'req.body')
 //     try {
 //         const { name, amd, description, Value, doc, role, startDate, endDate, user, seller, admin } = req.body;
 
@@ -136,11 +136,11 @@ exports.getTender = async (req, res) => {
 //             res.status(200).json(tender);
 //         });
 //     } catch (err) {
-//         console.log(err);
+//         //console.log(err);
 //     }
 // }
 // exports.updateTender = async (req, res) => {
-//     console.log(req.body, 'req.body')
+//     //console.log(req.body, 'req.body')
 //     try {
 //         const { name, amd, description, Value, doc, role, startDate, endDate, user, seller, admin } = req.body;
 
@@ -179,7 +179,7 @@ exports.getTender = async (req, res) => {
 //             res.status(200).json(tender);
 //         });
 //     } catch (err) {
-//         console.log(err);
+//         //console.log(err);
 //     }
 // }
 
@@ -200,7 +200,7 @@ exports.updateTender = async (req, res) => {
 
         res.status(200).json(tender);
     } catch (err) {
-        console.log(err);
+        //console.log(err);
     }
 }
 
@@ -217,7 +217,7 @@ exports.getTenderById = async (req, res) => {
             tender
         });
     } catch (err) {
-        console.log(err);
+        //console.log(err);
     }
 }
 
@@ -233,7 +233,7 @@ exports.deleteTender = async (req, res) => {
             message: "Tender deleted successfully",
         });
     } catch (err) {
-        console.log(err);
+        //console.log(err);
     }
 }
 

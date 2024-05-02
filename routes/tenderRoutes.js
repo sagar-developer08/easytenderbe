@@ -5,6 +5,8 @@ const { createTender, getTender, updateTender, getTenderById, deleteTender } = r
 const { isAuthenticated, authorizeRoles } = require('../middleware/Auth');
 const society = require('../controllers/SocietyController')
 router.post('/create', isAuthenticated,authorizeRoles('admin'),createTender);
+// 
+
 
 router.get('/gettender', getTender);
 
